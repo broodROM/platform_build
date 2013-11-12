@@ -476,4 +476,7 @@ RS_PREBUILT_CLCORE := prebuilts/sdk/renderscript/lib/$(TARGET_ARCH)/libclcore.bc
 RS_PREBUILT_LIBPATH := -L prebuilts/ndk/8/platforms/android-9/arch-$(TARGET_ARCH)/usr/lib
 RS_PREBUILT_COMPILER_RT := prebuilts/sdk/renderscript/lib/$(TARGET_ARCH)/libcompiler_rt.a
 
+# Enforce SELinux policy from CM
+include build/vendor/sepolicy/sepolicy.mk
+
 include $(BUILD_SYSTEM)/dumpvar.mk
