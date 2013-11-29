@@ -29,6 +29,7 @@ PRODUCT_PACKAGES := \
 
 PRODUCT_PACKAGES += \
     Galaxy4 \
+    Basic \
     HoloSpiralWallpaper \
     LiveWallpapers \
     LiveWallpapersPicker \
