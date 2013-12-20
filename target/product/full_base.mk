@@ -38,9 +38,6 @@ PRODUCT_PACKAGES += \
     PhaseBeam \
     VisualizationWallpapers \
     PhotoTable \
-    OctSun \
-    OctPhase \
-    OctPapers \
     Launcher3
 
 # Additional settings used in all AOSP builds
