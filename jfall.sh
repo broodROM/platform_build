@@ -25,7 +25,7 @@ lunch oct_jfltecsp-userdebug && make otapackage -j21
 lunch oct_jfltetmo-userdebug && make otapackage -j21
 
 
-find out/target/product  '(' -name '*.zip' -size +100000k -print0 ')' |
+find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do

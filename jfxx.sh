@@ -5,7 +5,7 @@ BDATE=(date +%m-%d)
 COPY_DIR=/home/copy/shares/shares/dubbsy/Carrier_ROMs
 # jfltexxr
 lunch oct_jfltexx-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*.zip' -size +100000k -print0 ')' |
+find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
