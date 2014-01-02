@@ -1,101 +1,129 @@
 #!/bin/bash
+## OctOs Automation Script
 source build/envsetup.sh
-make installclean
+
+## Current Build Date
 BDATE=`date +%m-%d`
-COPY_DIR=/home/copy/shares/shares/dubbsy/Carrier_ROMs
+## Check to see if there are build args
+## First Argument is for the -j concurrent build threads - Defaults to -j21 unless
+## you set it otherwise.  Careful, or it will melt your machine!
+if [ ! -z $1 ]; then
+        $1 = 21
+fi
+
+## Arg 2 is for Test vs Production.  True (y/1) means Test build, n/0 means Production
+## Defaults to Production
+if [ ! -z $2 ]; then
+        $1 = n
+fi
+
+TEST_BUILD=$2
+if [ TEST_BUILD ]; then
+COPY_DIR=/home/copy/shares/Octos/dubbsy/Carrier_ROMs/test_builds
+else
+COPY_DIR=/home/copy/shares/Octos/dubbsy/Carrier_ROMs
+fi
+
 if [ ! -d "${COPY_DIR}/${BDATE}" ]; then
         echo "Creating directory for ${COPY_DIR}/${BDATE}"
         mkdir -p ${COPY_DIR}/${BDATE}
 fi
 
-#VZW
-lunch oct_jfltevzw-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+# jfltevzw
+lunch oct_jfltevzw-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
-#SPR
-lunch oct_jfltespr-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+
+# jfltespr
+lunch oct_jfltespr-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
-#USC
-lunch oct_jflteusc-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+
+# jflteusc
+lunch oct_jflteusc-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
-#XX
-lunch oct_jfltexx-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+
+# jfltexx
+lunch oct_jfltexx-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
-#ATT
-lunch oct_jflteatt-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+
+# jflteatt
+lunch oct_jflteatt-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
-#CAN
-lunch oct_jfltecan-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+
+# jfltecan
+lunch oct_jfltecan-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
-#CRI
-lunch oct_jfltecri-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+# jfltecri
+lunch oct_jfltecri-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
-#CSP
-lunch oct_jfltecsp-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+
+# jfltecsp
+lunch oct_jfltecsp-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
-#TMO
-lunch oct_jfltetmo-userdebug && make installclean && make otapackage -j21
-find out/target/product  '(' -name '*ota-eng*.zip' -size +100000k -print0 ')' |
+
+# jfltetmo
+lunch oct_jfltetmo-userdebug && make installclean && make otapackage -j$1
+find out/target/product '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
                 echo "${CHECKSUM} ${FILENAME}" >> "${FILENAME}.md5"
-                mv -f ${FILENAME} ${COPY_DIR}/${BDATE}
-                mv -f "${FILENAME}.md5" ${COPY_DIR}/${BDATE}
+                cp $OUT/${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
+                cp $OUT/"${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
 
