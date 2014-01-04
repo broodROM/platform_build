@@ -2,4 +2,4 @@
 source build/envsetup.sh
 make installclean
 # jfltevzw
-lunch oct_jfltevzw-userdebug && make installclean && make otapackage -j6
+brunch oct_jfltevzw-userdebug && make installclean && make otapackage -j6
