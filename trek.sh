@@ -1,5 +1,5 @@
 #!/bin/bash
 source build/envsetup.sh
-make installclean
+make installclean && rm -rf out/target/product/jfltevzw/*md5sum
 # jfltevzw
-lunch oct_jfltevzw-userdebug && make installclean && make otapackage -j6
+brunch jfltevzw -j6
