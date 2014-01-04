@@ -2,6 +2,9 @@
 ## OctOs Automation Script
 source build/envsetup.sh
 
+## Clean Up Previous Builds
+make installclean
+
 ## Current Build Date
 BDATE=`date +%m-%d`
 ## Check to see if there are build args
@@ -24,18 +27,17 @@ if [ ! -d "${COPY_DIR}/${BDATE}" ]; then
 fi
 
 echo "Starting brunch with ${BSPEED} threads for ${COPY_DIR}"
-# jfltespr
-brunch oct_jfltespr-userdebug && make installclean && make otapackage -j${BSPEED}
-find ${OUT} '(' -name '*ota-eng*.zip' -size +100000k ')' -print0 |
+# jfltevzw
+brunch jfltevzw -j${BSPEED}
+find ${OUT} '(' -name '*OFFICIAL*' -size +150000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
 		if [ -e ${FILENAME}.md5 ]; then
-		   echo "Removing old .MD5 file ${FILENAME}.md5"
-		   rm "${FILENAME}.md5"
+		   echo "Removing old .MD5 file ${FILENAME}.md5sum"
+		   rm "${FILENAME}.md5sum"
 		fi
-		echo "${CHECKSUM} ${BDATE}"_"${FILENAME##*/}" >> "${FILENAME}.md5"
                 cp ${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
-                cp "${FILENAME}.md5" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
+                cp "${FILENAME}.md5sum" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
         done
 
