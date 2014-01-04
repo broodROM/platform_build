@@ -1,7 +1,7 @@
 function hmm() {
 cat <<EOF
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
-- brunch:   brunch <product_name>-<build_variant>
+- lunch:   lunch <product_name>-<build_variant>
 - tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5] [eng|userdebug|user]
 - croot:   Changes directory to the top of the tree.
 - m:       Makes from the top of the tree.
@@ -97,7 +97,7 @@ function setpaths()
     #                                                                #
     #   This function sets ANDROID_BUILD_PATHS to what it is adding  #
     #   to PATH, and the next time it is run, it removes that from   #
-    #   PATH.  This is required so brunch can be run more than once   #
+    #   PATH.  This is required so lunch can be run more than once   #
     #   and still have working paths.                                #
     #                                                                #
     ##################################################################
@@ -415,7 +415,7 @@ function choosecombo()
 # Clear this variable.  It will be built up again when the vendorsetup.sh
 # files are included at the end of this file.
 unset LUNCH_MENU_CHOICES
-function add_brunch_combo()
+function add_lunch_combo()
 {
     local new_combo=$1
     local c
@@ -428,7 +428,7 @@ function add_brunch_combo()
 }
 
 
-function print_brunch_menu()
+function print_lunch_menu()
 {
     local uname=$(uname)
     echo
@@ -475,7 +475,7 @@ function breakfast()
     target=$1
     OCT_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
-    add_brunch_combo full-eng
+    add_lunch_combo full-eng
     for f in `/bin/ls vendor/oct/vendorsetup.sh 2> /dev/null`
         do
 echo "including $f"
@@ -485,28 +485,28 @@ unset f
 
     if [ $# -eq 0 ]; then
         # No arguments, so let's have the full menu
-        brunch
+        lunch
     else
 echo "z$target" | grep -q "-"
         if [ $? -eq 0 ]; then
             # A buildtype was specified, assume a full device name
-            brunch $target
+            lunch $target
         else
             # This is probably just the OCT model name
-            brunch oct_$target-userdebug
+            lunch oct_$target-userdebug
         fi
 fi
 return $?
 }
 
-function brunch()
+function lunch()
 {
     local answer
 
     if [ "$1" ] ; then
         answer=$1
     else
-        print_brunch_menu
+        print_lunch_menu
         echo -n "Which would you like? [aosp_arm-eng] "
         read answer
     fi
@@ -530,7 +530,7 @@ function brunch()
     if [ -z "$selection" ]
     then
         echo
-        echo "Invalid brunch combo: $answer"
+        echo "Invalid lunch combo: $answer"
         return 1
     fi
 
@@ -572,8 +572,8 @@ function brunch()
     printconfig
 }
 
-# Tab completion for brunch.
-function _brunch()
+# Tab completion for lunch.
+function _lunch()
 {
     local cur prev opts
     COMPREPLY=()
@@ -583,7 +583,7 @@ function _brunch()
     COMPREPLY=( $(compgen -W "${LUNCH_MENU_CHOICES[*]}" -- ${cur}) )
     return 0
 }
-complete -F _brunch brunch
+complete -F _lunch lunch
 
 # Configures the build to build unbundled apps.
 # Run tapas with one ore more app names (from LOCAL_PACKAGE_NAME)
@@ -1272,7 +1272,7 @@ function key_menu()
 function smoketest()
 {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "Couldn't locate output files.  Try running 'brunch' first." >&2
+        echo "Couldn't locate output files.  Try running 'lunch' first." >&2
         return
     fi
     T=$(gettop)
