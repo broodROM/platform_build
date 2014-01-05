@@ -37,7 +37,7 @@ find ${OUT} '(' -name '*OFFICIAL*' -size +150000k ')' -print0 |
 		   echo "Removing old .MD5 file ${FILENAME}.md5sum"
 		   rm "${FILENAME}.md5sum"
 		fi
-                cp ${FILENAME} ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}
-                cp "${FILENAME}.md5sum" ${COPY_DIR}/${BDATE}/${BDATE}"_"${FILENAME##*/}.md5
+                cp ${FILENAME} ${COPY_DIR}/${BDATE}/${FILENAME##*/}
+                cp "${FILENAME}.md5sum" ${COPY_DIR}/${BDATE}/${FILENAME##*/}.md5
         done
 
