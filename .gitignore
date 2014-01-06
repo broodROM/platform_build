@@ -1,1 +1,2 @@
-*.pyc
+#Ignore the Credential Files
+credentials.sh
