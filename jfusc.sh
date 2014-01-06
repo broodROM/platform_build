@@ -16,13 +16,17 @@ PUSH=$1
 : ${BSPEED:="21"}
 : ${PUSH:=false}
 
+if [ $1 = "y" ]; then
+PUSH=true
+fi
+
 if [ ! -d "${COPY_DIR}/${BDATE}" ]; then
 	echo "Creating directory for ${COPY_DIR}/${BDATE}"
 	mkdir -p ${COPY_DIR}/${BDATE}
 fi
 
 echo "Starting brunch with ${BSPEED} threads for ${COPY_DIR}"
-if [ ${PUSH} ]; then
+if ${PUSH}; then
 echo "Pushing to Remote after build!"
 fi
 # jflteusc
@@ -36,7 +40,7 @@ find ${OUT} '(' -name '*OFFICIAL*' -size +150000k ')' -print0 |
                 echo "Removing old .MD5 file ${FILENAME}.md5sum"
                 rm ${OUT}/*.md5*
 
-		if [ ${PUSH} ]; then
+		if ${PUSH}; then
      			echo "Removing existing file from remote."
 			ssh ${RACF}@${RHOST} 'rm -rf ~/Carrier_ROMs/*jflteusc*' < /dev/null
      			echo "Pushing new file ${FILENAME##/*} to remote"

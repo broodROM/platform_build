@@ -1,6 +1,7 @@
 #!/bin/bash
 ## OctOs Automation Script
 source build/envsetup.sh
+source build/credentials.sh
 
 ## Clean Up Previous Builds
 make installclean
@@ -10,15 +11,13 @@ BDATE=`date +%m-%d`
 ## Check to see if there are build args
 ## First Argument is for the -j concurrent build threads - Defaults to -j21 unless
 ## you set it otherwise.  Careful, or it will melt your machine!
-BSPEED=$1
-TEST=$2
+BSPEED=$2
+PUSH=$1
 : ${BSPEED:="21"}
-: ${TEST:=false}
+: ${PUSH:=false}
 
-if ${TEST} ; then
-COPY_DIR=/home/copy/shares/Octos/dubbsy/Carrier_ROMs/test_builds
-else
-COPY_DIR=/home/copy/shares/Octos/dubbsy/Carrier_ROMs
+if [ $1 = "y" ]; then
+PUSH=true
 fi
 
 if [ ! -d "${COPY_DIR}/${BDATE}" ]; then
@@ -27,17 +26,25 @@ if [ ! -d "${COPY_DIR}/${BDATE}" ]; then
 fi
 
 echo "Starting brunch with ${BSPEED} threads for ${COPY_DIR}"
+if ${PUSH}; then
+echo "Pushing to Remote after build!"
+fi
 # d2vzw
 brunch d2vzw -j${BSPEED}
 find ${OUT} '(' -name '*OFFICIAL*' -size +150000k ')' -print0 |
         xargs --null md5sum |
         while read CHECKSUM FILENAME
         do
-		if [ -e ${FILENAME}.md5 ]; then
-		   echo "Removing old .MD5 file ${FILENAME}.md5sum"
-		   rm "${FILENAME}.md5sum"
-		fi
                 cp ${FILENAME} ${COPY_DIR}/${BDATE}/${FILENAME##*/}
                 cp "${FILENAME}.md5sum" ${COPY_DIR}/${BDATE}/${FILENAME##*/}.md5
+                echo "Removing old .MD5 file ${FILENAME}.md5sum"
+                rm ${OUT}/*.md5*
+
+		if ${PUSH}; then
+     			echo "Removing existing file from remote."
+			ssh ${RACF}@${RHOST} 'rm -rf ~/Carrier_ROMs/*d2vzw*' < /dev/null
+     			echo "Pushing new file ${FILENAME##/*} to remote"
+     			scp ${FILENAME} ${RACF}@${RHOST}:~/Carrier_ROMs/${FILENAME##*/}
+		fi
         done
 
