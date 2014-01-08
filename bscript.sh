@@ -1,5 +1,4 @@
 #!/bin/bash
-<<<<<<< HEAD
 ## Build Automation Scripts
 ##
 ## Copywrite 2014 - Donald Hoskins <grommish@gmail.com>
