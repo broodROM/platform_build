@@ -7,9 +7,9 @@
 ## Check to see if there are build args
 ## First Argument is for the -j concurrent build threads - Defaults to -j21 unless
 ## you set it otherwise.  Careful, or it will melt your machine!
-PUSH=$1
 BSPEED=$2
-: ${PUSH:=false}
+PUSH=$1
 : ${BSPEED:="21"}
+: ${PUSH:=false}
 BVARIANT=`basename $0 | cut -f 1 -d "."`
-build/bscript.sh ${PUSH} ${BSPEED} ${BVARIANT}
+source build/bscript.sh ${PUSH} ${BSPEED} ${BVARIANT}
