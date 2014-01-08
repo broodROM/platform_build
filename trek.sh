@@ -2,4 +2,4 @@
 source build/envsetup.sh
 make installclean && rm -rf out/target/product/jfltevzw/*md5sum
 # jfltevzw
-brunch jfltevzw -j6
+brunch jfltevzw -j21
