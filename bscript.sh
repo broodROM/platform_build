@@ -1,4 +1,13 @@
 #!/bin/bash
+<<<<<<< HEAD
+## OctOs Automation Script
+
+source build/envsetup.sh
+source build/credentials.sh
+PUSH=$1
+BSPEED=$2
+BVARIANT=$3
+=======
 ## Build Automation Scripts
 ##
 ## Copywrite 2014 - Donald Hoskins <grommish@gmail.com>
@@ -6,6 +15,7 @@
 
 source build/envsetup.sh
 source build/credentials.sh
+>>>>>>> e815c194ff91d61a193a1f10d33907fb74d68db1
 
 ## Clean Up Previous Builds
 make installclean
