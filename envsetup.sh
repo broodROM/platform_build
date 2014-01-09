@@ -315,7 +315,7 @@ function chooseproduct()
     if [ "x$TARGET_PRODUCT" != x ] ; then
         default_value=$TARGET_PRODUCT
     else
-        default_value=full
+        default_value=full_base
     fi
 
     export TARGET_PRODUCT=
