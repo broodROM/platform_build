@@ -314,8 +314,6 @@ function chooseproduct()
 {
     if [ "x$TARGET_PRODUCT" != x ] ; then
         default_value=$TARGET_PRODUCT
-    else
-        default_value=full
     fi
 
     export TARGET_PRODUCT=
