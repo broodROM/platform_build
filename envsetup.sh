@@ -59,6 +59,14 @@ function check_product()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
+    
+    if (echo -n $1 | grep -q -e "^oct_") ; then
+       OCT_BUILD=$(echo -n $1 | sed -e 's/^oct_//g')
+    else
+       OCT_BUILD=
+    fi
+    export OCT_BUILD
+    
     CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
