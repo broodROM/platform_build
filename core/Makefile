@@ -1,9 +1,5 @@
 # Put some miscellaneous rules here
 
-# First we create needed directory for the build
-
-$(BIN_DIR) $(OBJ_DIR):
-	mkdir -p out/target/product/../obj/KERNEL_OBJ/usr
 	
 # Build system colors
 
