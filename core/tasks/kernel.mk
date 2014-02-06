@@ -169,6 +169,7 @@ endif
 
 $(KERNEL_OUT):
 	mkdir -p $(KERNEL_OUT)
+	mkdir -p $(KERNEL_OUT)/usr
 	mkdir -p $(KERNEL_MODULES_OUT)
 
 $(KERNEL_CONFIG): $(KERNEL_OUT)
