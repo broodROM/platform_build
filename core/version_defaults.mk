@@ -44,15 +44,6 @@ ifeq "" "$(PLATFORM_VERSION)"
   PLATFORM_VERSION := 4.4.2
 endif
 
-ifeq "" "$(KERNEL_VERSION)"
-  # This function receives the current kernel version of the included kernel.
-  $(shell export CAT=`cat kernel/samsung/jf/Makefile | grep 'SUBLEVEL = ' > /tmp/kernelversion`)
-  $(shell sed -i 's|SUBLEVEL = ||g' /tmp/kernelversion)
-  $(shell sed -i 's| ||g' /tmp/kernelversion)
-  KERNEL_VERSION := 3.4.$(shell cat /tmp/kernelversion)
-endif
-
-
 ifeq "" "$(PLATFORM_SDK_VERSION)"
   # This is the canonical definition of the SDK version, which defines
   # the set of APIs and functionality available in the platform.  It
