@@ -362,7 +362,7 @@ def AppendAssertions(script, info_dict):
       device = GetBuildProp("ro.product.device", info_dict)
   else:
     device = OPTIONS.override_device
-  script.AssertDevice(device)
+#  script.AssertDevice(device)
 
 
 def MakeRecoveryPatch(input_tmp, output_zip, recovery_img, boot_img):
@@ -452,9 +452,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
   #  ts_text = GetBuildProp("ro.build.date", OPTIONS.info_dict)
   #  script.AssertOlderBuild(ts, ts_text)
 
-  AppendAssertions(script, OPTIONS.info_dict)
-  device_specific.FullOTA_Assertions()
-  device_specific.FullOTA_InstallBegin()
+  #AppendAssertions(script, OPTIONS.info_dict)
+  #device_specific.FullOTA_Assertions()
+  #device_specific.FullOTA_InstallBegin()
 
   if OPTIONS.backuptool:
     script.Mount("/system")
