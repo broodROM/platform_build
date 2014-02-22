@@ -453,17 +453,17 @@ function lunch()
         answer=$1
     else
         print_lunch_menu
-        echo -n "Which would you like? [full_jfltexx-userdebug] "
+        echo -n "Which would you like? [full_jflte-userdebug] "
         read answer
     fi
 
     local selection=
 
-    mkdir -p out/target/product/jfltexx/obj/KERNEL_OBJ/usr
+    mkdir -p out/target/product/jflte/obj/KERNEL_OBJ/usr
 
     if [ -z "$answer" ]
     then
-        selection=full_jfltexx-userdebug
+        selection=full_jflte-userdebug
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
         if [ $answer -le ${#LUNCH_MENU_CHOICES[@]} ]
