@@ -47,7 +47,6 @@ $(warning *  You are using version $(MAKE_VERSION) of make.)
 $(warning *  Android can only be built by versions 3.81 and 3.82.)
 $(warning *  see https://source.android.com/source/download.html)
 $(warning ********************************************************************************)
-# $(error stopping)
 endif
 endif
 endif
@@ -501,7 +500,7 @@ ifneq ($(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUIL
   $(warning *)
   $(foreach bad_prebuilt,$(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUILT)))),$(warning * unexpected $(bad_prebuilt) in ALL_PREBUILT))
   $(warning *)
-  $(error ALL_PREBUILT contains unexpected files)
+  #$(error ALL_PREBUILT contains unexpected files)
 endif
 
 # -------------------------------------------------------------------
