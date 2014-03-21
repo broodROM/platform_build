@@ -187,6 +187,67 @@ function setpaths()
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
 }
 
+function flashkernel()
+{
+    T=$(gettop)
+    if [ ! "$T" ]; then
+        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
+        return
+    fi
+    adb get-state > /tmp/state
+    export DEVICESTATE=`cat /tmp/state`;
+    rm -f /tmp/state
+
+    if [[ ${DEVICESTATE} != 'device' ]]; then
+        echo "Waiting for device..."
+        echo "Make sure debugging mode is enabled"
+        adb 'wait-for-device'
+        echo "Device found"
+    fi;
+    echo "Pushing kernel to sdcard..."
+    adb push $OUT/boot.img /sdcard/boot.img
+    echo "Flashing kernel..."
+    adb -d shell "dd if=/sdcard/boot.img of=/dev/block/platform/msm_sdcc.1/by-name/boot"
+    adb -d remount
+    echo "Pushing modules to system..."
+    adb push $OUT/system/lib/modules /system/lib/modules
+    echo "Setting permissions of modules..."
+    adb -d shell "chmod 644 /system/lib/modules/*.ko"
+    echo "Done, rebooting phone..."
+    adb reboot
+}
+
+function flashrom()
+{
+    T=$(gettop)
+    if [ ! "$T" ]; then
+        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
+        return
+    fi
+    adb get-state > /tmp/state
+    export DEVICESTATE=`cat /tmp/state`;
+    rm -f /tmp/state
+
+    if [[ ${DEVICESTATE} != 'device' ]]; then
+        echo "Waiting for device..."
+        echo "Make sure debugging mode is enabled"
+        adb 'wait-for-device'
+        echo "Device found"
+    fi;
+    echo "Pushing latest otapackage to sdcard"
+    adb -d push $OUT/full_jflte-ota-eng.${USER}.zip /sdcard/
+    echo "Writing recovery instructions"
+    adb -d shell "echo '--update_package=/sdcard/full_jflte-ota-eng.${USER}.zip' > /cache/recovery/command"
+    echo "Rebooting in recovery and installing rom..."
+    adb -d reboot recovery
+    adb -d wait-for-device 
+    echo "Installing Gapps + Root now..."
+    adb -d shell "echo '--update_package=/sdcard/gapps-4.4.2-lite-with-supersu-1.86.zip' > /cache/recovery/command"
+    adb reboot recovery
+    adb wait-for-device
+    echo "Flashing ROM, Gapps Lite and Root finished!"
+}
+
 function printconfig()
 {
     T=$(gettop)
@@ -794,18 +855,18 @@ function qpid() {
         append='$'
         shift
     elif [ "$1" = "--help" -o "$1" = "-h" ]; then
-		echo "usage: qpid [[--exact] <process name|pid>"
-		return 255
-	fi
+        echo "usage: qpid [[--exact] <process name|pid>"
+        return 255
+    fi
 
     local EXE="$1"
     if [ "$EXE" ] ; then
-		qpid | \grep "$prepend$EXE$append"
-	else
-		adb shell ps \
-			| tr -d '\r' \
-			| sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
-	fi
+        qpid | \grep "$prepend$EXE$append"
+    else
+        adb shell ps \
+            | tr -d '\r' \
+            | sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
+    fi
 }
 
 function pid()
@@ -826,7 +887,7 @@ function pid()
         echo "$PID"
     else
         echo "usage: pid [--exact] <process name>"
-		return 255
+        return 255
     fi
 }
 
