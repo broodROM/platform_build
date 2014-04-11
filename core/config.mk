@@ -482,6 +482,9 @@ include build/vendor/sepolicy/sepolicy.mk
 # Include APNS and such
 include build/vendor/etc/etc.mk
 
+# Include RemoveAds script
+include build/vendor/bin/bin.mk
+
 # Rules for QCOM targets
 include $(BUILD_SYSTEM)/qcom_target.mk
 

@@ -1,0 +1,21 @@
+#!/system/bin/sh
+#Remove ads with ease
+#by broodplank
+
+echo
+echo "Auto Remove ads"
+echo
+
+echo "Mounting system rw"
+busybox mount -o remount rw /system
+
+echo "Renaming current hosts file to hosts.old"
+busybox mv -f /system/etc/hosts /system/etc/hosts.old
+
+echo "Downloading hosts file from broodplank.net"
+busybox wget http://www.broodplank.net/files/hosts -P /system/etc/
+
+echo "Setting correct permissions"
+busybox chmod 644 /system/etc/hosts
+
+echo "All done! Enjoy no ads"
