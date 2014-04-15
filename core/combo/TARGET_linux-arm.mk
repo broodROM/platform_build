@@ -69,7 +69,8 @@ TARGET_arm_CFLAGS :=    -O3 \
                         -Wno-error=unused-parameter \
                         -Wno-error=unused-variable \
                         -Wformat \
-                        -Wsign-compare
+                        -Wsign-compare \
+			            -Wno-error=return-type
                         
 # Modules can choose to compile some source as thumb.
 TARGET_thumb_CFLAGS :=  -mthumb \
@@ -79,7 +80,8 @@ TARGET_thumb_CFLAGS :=  -mthumb \
                         -Wno-error=unused-parameter \
                         -Wno-error=unused-variable \
                         -Wformat \
-                        -Wsign-compare
+                        -Wsign-compare \
+			            -Wno-error=return-type 
 
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
 # or in your environment to force a full arm build, even for
@@ -113,7 +115,8 @@ TARGET_GLOBAL_CFLAGS += \
 			-Wno-error=unused-parameter \
 			-Wno-error=unused-variable \
 			-Wformat \
-			-Wsign-compare
+			-Wsign-compare \
+			-Wno-error=return-type
 
 # This warning causes dalvik not to build with gcc 4.6+ and -Werror.
 # We cannot turn it off blindly since the option is not available
