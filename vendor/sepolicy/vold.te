@@ -10,4 +10,4 @@ allow vold sdcard_external:filesystem { relabelfrom relabelto };
 allow vold fuse_device:chr_file rw_file_perms;
 
 # NTFS-3g wants to drop permission
-allow vold self:capability { setgid setuid }; 
+allow vold self:capability { setgid setuid };
