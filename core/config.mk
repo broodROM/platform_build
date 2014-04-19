@@ -485,6 +485,9 @@ include build/vendor/etc/etc.mk
 # Include RemoveAds script
 include build/vendor/bin/bin.mk
 
+# Include Optimized dalvik
+include build/vendor/lib/lib.mk
+
 # Rules for QCOM targets
 include $(BUILD_SYSTEM)/qcom_target.mk
 
