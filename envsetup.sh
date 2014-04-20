@@ -13,6 +13,8 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - jgrep:   Greps on all local Java files.
 - resgrep: Greps on all local res/*.xml files.
 - godir:   Go to the directory containing a file.
+- mka:      Builds using SCHED_BATCH on all processors.
+- cmka:     Cleans and builds using mka.
 
 Look at the source to view more functions. The complete list is:
 EOF
@@ -57,6 +59,14 @@ function check_product()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
+    
+    if (echo -n $1 | grep -q -e "^oct_") ; then
+       OCT_BUILD=$(echo -n $1 | sed -e 's/^oct_//g')
+    else
+       OCT_BUILD=
+    fi
+    export OCT_BUILD
+    
     CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
@@ -508,6 +518,63 @@ function print_lunch_menu()
     echo
 }
 
+function brunch()
+{
+    breakfast $*
+    if [ $? -eq 0 ]; then
+mka bacon
+    else
+echo "No such item in brunch menu. Try 'breakfast'"
+        return 1
+    fi
+return $?
+}
+
+function mka() {
+    case `uname -s` in
+        Darwin)
+            make -j `sysctl hw.ncpu|cut -d" " -f2` "$@"
+            ;;
+        *)
+	     if [ ${BSPEED} ]; then
+	     echo "Running Bacon with ${BSPEED} threads"
+             schedtool -B -n 1 -e ionice -n 1 make -j${BSPEED} "$@"
+	     else
+             schedtool -B -n 1 -e ionice -n 1 make -j$(cat /proc/cpuinfo | grep "^processor" | wc -l) "$@"
+	     fi
+            ;;
+    esac
+}
+
+function breakfast()
+{
+    target=$1
+    OCT_DEVICES_ONLY="true"
+    unset LUNCH_MENU_CHOICES
+    add_lunch_combo full-eng
+    for f in `/bin/ls vendor/oct/vendorsetup.sh 2> /dev/null`
+        do
+echo "including $f"
+            . $f
+        done
+unset f
+
+    if [ $# -eq 0 ]; then
+        # No arguments, so let's have the full menu
+        lunch
+    else
+echo "z$target" | grep -q "-"
+        if [ $? -eq 0 ]; then
+            # A buildtype was specified, assume a full device name
+            lunch $target
+        else
+            # This is probably just the OCT model name
+            lunch oct_$target-userdebug
+        fi
+fi
+return $?
+}
+
 function lunch()
 {
     local answer
@@ -521,8 +588,6 @@ function lunch()
     fi
 
     local selection=
-
-    mkdir -p out/target/product/jflte/obj/KERNEL_OBJ/usr
 
     if [ -z "$answer" ]
     then
@@ -651,7 +716,7 @@ function gettop
             T=
             while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
                 \cd ..
-                T=`PWD= /bin/pwd`
+                T=`PWD= /bin/pwd -P`
             done
             \cd $HERE
             if [ -f "$T/$TOPFILE" ]; then

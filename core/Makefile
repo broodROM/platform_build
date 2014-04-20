@@ -1,5 +1,6 @@
 # Put some miscellaneous rules here
 
+	
 # Build system colors
 
 ifneq ($(BUILD_WITH_COLORS),0)
@@ -31,10 +32,10 @@ is_tests_build := $(filter tests,$(MAKECMDGOALS))
 # The filter part means "only eval the copy-one-file rule if this
 # src:dest pair is the first one to match the same dest"
 #$(1): the src:dest pair
-define check-product-copy-files
+#define check-product-copy-files
 #$(if $(filter %.apk, $(1)),$(error \
 #    Prebuilt apk found in PRODUCT_COPY_FILES: $(1), use BUILD_PREBUILT instead!))
-endef
+#endef
 # filter out the duplicate <source file>:<dest file> pairs.
 unique_product_copy_files_pairs :=
 $(foreach cf,$(PRODUCT_COPY_FILES), \
@@ -44,7 +45,6 @@ unique_product_copy_files_destinations :=
 $(foreach cf,$(unique_product_copy_files_pairs), \
     $(eval _src := $(call word-colon,1,$(cf))) \
     $(eval _dest := $(call word-colon,2,$(cf))) \
-    $(call check-product-copy-files,$(cf)) \
     $(if $(filter $(unique_product_copy_files_destinations),$(_dest)), \
         $(info PRODUCT_COPY_FILES $(cf) ignored.), \
         $(eval _fulldest := $(call append-path,$(PRODUCT_OUT),$(_dest))) \
@@ -181,6 +181,7 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(
 	@mkdir -p $(dir $@)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 			TARGET_DEVICE="$(TARGET_DEVICE)" \
+			OCT_DEVICE="$(TARGET_DEVICE)" \
 			PRODUCT_NAME="$(TARGET_PRODUCT)" \
 			PRODUCT_BRAND="$(PRODUCT_BRAND)" \
 			PRODUCT_DEFAULT_LANGUAGE="$(call default-locale-language,$(PRODUCT_LOCALES))" \
@@ -226,7 +227,7 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(
 		        echo "#" >> $@; )
 	$(hide) $(foreach line,$(ADDITIONAL_BUILD_PROPERTIES), \
 		echo "$(line)" >> $@;)
-	$(hide) build/tools/post_process_props.py $@
+	$(hide) build/tools/post_process_props.py $@ "$(PRODUCT_PROPERTY_UBER_OVERRIDES)"
 
 build_desc :=
 
@@ -1120,6 +1121,7 @@ endif
 DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
 	  $(HOST_OUT_EXECUTABLES)/mkbootfs \
 	  $(HOST_OUT_EXECUTABLES)/mkbootimg \
+	  $(HOST_OUT_EXECUTABLES)/unpackbootimg \
 	  $(HOST_OUT_EXECUTABLES)/fs_config \
 	  $(HOST_OUT_EXECUTABLES)/mkyaffs2image \
 	  $(HOST_OUT_EXECUTABLES)/zipalign \
@@ -1137,6 +1139,11 @@ OTATOOLS := $(DISTTOOLS) \
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
+
+UNPACKBOOTIMG :=  $(HOST_OUT_EXECUTABLES)/unpackbootimg
+
+.PHONY: unpackbootimg
+otatools: $(UNPACKBOOTIMG)
 
 # -----------------------------------------------------------------
 # A zip of the directories that map to the target filesystem.
@@ -1346,8 +1353,17 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   --override_prop=$(override_prop) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-.PHONY: otapackage
+.PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
+
+bacon: otapackage
+ifneq ($(TARGET_CUSTOM_RELEASETOOL),)
+	@echo -e ${CL_YLW}"Running custom releasetool..."${CL_RST}
+	$(hide) OTAPACKAGE=$(INTERNAL_OTA_PACKAGE_TARGET) APKCERTS=$(APKCERTS_FILE) $(TARGET_CUSTOM_RELEASETOOL)
+else
+	@echo -e ${CL_YLW}"Running releasetool..."${CL_RST}
+	$(hide) OTAPACKAGE=$(INTERNAL_OTA_PACKAGE_TARGET) APKCERTS=$(APKCERTS_FILE) ./vendor/oct/tools/squisher
+endif
 
 # -----------------------------------------------------------------
 # The update package

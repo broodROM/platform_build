@@ -37,6 +37,19 @@ endif
 #TOPDIR := $(TOP)/
 #endif
 
+# Check for broken versions of make.
+# (Allow any version under Cygwin since we don't actually build the platform there.)
+ifeq (,$(findstring CYGWIN,$(shell uname -sm)))
+ifeq (0,$(shell expr $$(echo $(MAKE_VERSION) | sed "s/[^0-9\.].*//") = 3.81))
+ifeq (0,$(shell expr $$(echo $(MAKE_VERSION) | sed "s/[^0-9\.].*//") = 3.82))
+$(warning ********************************************************************************)
+$(warning *  You are using version $(MAKE_VERSION) of make.)
+$(warning *  Android can only be built by versions 3.81 and 3.82.)
+$(warning *  see https://source.android.com/source/download.html)
+$(warning ********************************************************************************)
+endif
+endif
+endif
 # Absolute path of the present working direcotry.
 # This overrides the shell variable $PWD, which does not necessarily points to
 # the top of the source tree, for example when "make -C" is used in m/mm/mmm.
@@ -170,22 +183,7 @@ $(error stop)
 endif
 
 ifndef BUILD_EMULATOR
-ifeq (darwin,$(HOST_OS))
-GCC_REALPATH = $(realpath $(shell which $(HOST_CC)))
-ifneq ($(findstring llvm-gcc,$(GCC_REALPATH)),)
-  # Using LLVM GCC results in a non functional emulator due to it
-  # not honouring global register variables
-  $(warning ****************************************)
-  $(warning * gcc is linked to llvm-gcc which will *)
-  $(warning * not create a useable emulator.       *)
-  $(warning ****************************************)
   BUILD_EMULATOR := false
-else
-  BUILD_EMULATOR := true
-endif
-else   # HOST_OS is not darwin
-  BUILD_EMULATOR := true
-endif  # HOST_OS is darwin
 endif
 
 $(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
